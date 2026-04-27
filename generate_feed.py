@@ -128,7 +128,7 @@ def main():
 
     feed = build_feed(items_xml, format_datetime(now))
 
-    with open('avfall-feed.xml', 'w', encoding='utf-8') as f:
+    with open('avfall-feed.rss', 'w', encoding='utf-8') as f:
         f.write(feed)
 
     print(f'Feed generert: {items_xml.count("<item>")} items (per {now.strftime("%Y-%m-%d %H:%M %Z")})')

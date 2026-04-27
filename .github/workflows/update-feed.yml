@@ -1,0 +1,35 @@
+name: Oppdater avfallsfeed
+
+on:
+  schedule:
+    # Kjører kl. 05:00 UTC = 07:00 norsk sommertid (CEST) hver dag
+    - cron: '0 5 * * *'
+  workflow_dispatch: # Tillater manuell kjøring fra GitHub-grensesnittet
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hent kode
+        uses: actions/checkout@v4
+
+      - name: Sett opp Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generer feed
+        run: python generate_feed.py
+
+      - name: Commit og push hvis feeden er endret
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add avfall-feed.xml
+          if git diff --cached --quiet; then
+            echo "Ingen endringer i feeden i dag."
+          else
+            git commit -m "Oppdater avfallsfeed $(date +'%Y-%m-%d')"
+            git push
+          fi

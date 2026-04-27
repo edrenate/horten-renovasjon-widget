@@ -257,12 +257,15 @@
   }
 
   function visKalender(adresse, kalender) {
-    if (!kalender || !kalender.length) {
+    // API returnerer enten flat array eller innpakket objekt {Tommedatoer: [...]}
+    const liste = Array.isArray(kalender) ? kalender : (kalender?.Tommedatoer ?? []);
+
+    if (!liste.length) {
       resultatEl.innerHTML = `<p class="ingen-data">Fant ingen hentedager for denne adressen.</p>`;
       return;
     }
 
-    const sortert = [...kalender].sort((a, b) => {
+    const sortert = [...liste].sort((a, b) => {
       const aFørste = a.Tommedatoer[0] || "9999";
       const bFørste = b.Tommedatoer[0] || "9999";
       return aFørste.localeCompare(bFørste);

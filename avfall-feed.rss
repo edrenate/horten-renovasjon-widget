@@ -2,12 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Avfallshenting i Horten</title>
-    <link>https://www.horten.kommune.no/renovasjon/hentedager-for-avfall/</link>
-    <description>Varsler om avfallshenting i Horten kommune. Minner deg på hvilke avfallstyper som hentes neste dag.</description>
-    <language>no</language>
-    <lastBuildDate>Mon, 27 Apr 2026 19:02:36 +0200</lastBuildDate>
-    <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.xml" rel="self" type="application/rss+xml"/>
+    <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+    <description>Ukentlige varsler om avfallshenting i Horten kommune.</description>
+    <lastBuildDate>Mon, 27 Apr 2026 20:07:45 +0200</lastBuildDate>
+    <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.rss" rel="self" type="application/rss+xml"/>
     <managingEditor>post@horten.kommune.no (Horten kommune)</managingEditor>
     <ttl>60</ttl>
+    <item>
+      <title>🥦 🧴 Avfallshenting denne uka – Matavfall og Plastemballasje</title>
+      <description>Denne uka (uke 18) hentes følgende avfall i Horten: Matavfall og Plastemballasje. Sjekk hvilken dag avfallet hentes hos deg på horten.kommune.no.</description>
+      <pubDate>Sun, 26 Apr 2026 19:00:00 +0200</pubDate>
+      <guid isPermaLink="false">horten-avfall-uke-2026-18</guid>
+      <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+    </item>
   </channel>
 </rss>

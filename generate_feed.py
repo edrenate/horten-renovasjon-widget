@@ -1,17 +1,14 @@
 """
-Generates avfall-feed.xml with only items whose pubDate has been reached.
-Run daily via GitHub Actions. The RSS monitor in the app will detect
-each new item (by guid) and trigger a push notification.
+Generates avfall-feed.rss with one item per collection week.
+pubDate = Sunday 19:00 Oslo time before the collection week.
+Run weekly via GitHub Actions on Sundays at 17:00 UTC = 19:00 CEST.
 """
 
 from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
+from collections import defaultdict
 
 OSLO = timezone(timedelta(hours=2))  # CEST (summer time)
-
-UKEDAG = ['mandag','tirsdag','onsdag','torsdag','fredag','lørdag','søndag']
-MAANED = ['januar','februar','mars','april','mai','juni','juli','august',
-          'september','oktober','november','desember']
 
 IKONER = {
     'Matavfall':                  '🥦',
@@ -21,13 +18,12 @@ IKONER = {
     'Glass- og metallemballasje': '🍾',
 }
 
-# Link users to the widget article where they can look up their own address.
-# Update this URL when the article is published on the final page.
-ARTICLE_URL = 'https://www.horten.kommune.no/renovasjon/hentedager-for-avfall/'
+TYPE_ORDER = list(IKONER.keys())
+
+ARTICLE_URL = 'https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/'
 
 # All planned collection dates up to week 36.
 # key = collection date (YYYY-MM-DD), value = list of waste types collected.
-# pubDate = 07:00 Oslo time the DAY BEFORE collection.
 COLLECTIONS = {
     '2026-04-29': ['Matavfall', 'Plastemballasje'],
     '2026-05-06': ['Matavfall'],
@@ -59,16 +55,24 @@ COLLECTIONS = {
 }
 
 
-def pub_datetime(collection_date_str):
-    """Returns 07:00 Oslo time the day before the collection date."""
-    d = datetime.strptime(collection_date_str, '%Y-%m-%d')
-    dag_foer = d - timedelta(days=1)
-    return datetime(dag_foer.year, dag_foer.month, dag_foer.day, 7, 0, 0,
-                    tzinfo=OSLO)
+def group_by_week():
+    """Groups all collection types by ISO (year, week), sorted consistently."""
+    weeks = defaultdict(set)
+    for date_str, typer in COLLECTIONS.items():
+        d = datetime.strptime(date_str, '%Y-%m-%d')
+        iso_year, iso_week, _ = d.isocalendar()
+        weeks[(iso_year, iso_week)].update(typer)
+    return {
+        k: sorted(v, key=lambda t: TYPE_ORDER.index(t) if t in TYPE_ORDER else 99)
+        for k, v in sorted(weeks.items())
+    }
 
 
-def norsk_dato(d):
-    return f'{UKEDAG[d.weekday()]} {d.day}. {MAANED[d.month - 1]}'
+def sunday_pub_dt(iso_year, iso_week):
+    """Returns Sunday 19:00 Oslo time before the given ISO week starts."""
+    monday = datetime.strptime(f'{iso_year}-W{iso_week:02d}-1', '%G-W%V-%u')
+    sunday = monday - timedelta(days=1)
+    return datetime(sunday.year, sunday.month, sunday.day, 19, 0, 0, tzinfo=OSLO)
 
 
 def typer_streng(typer):
@@ -83,10 +87,9 @@ def build_feed(items_xml, now_str):
   <channel>
     <title>Avfallshenting i Horten</title>
     <link>{ARTICLE_URL}</link>
-    <description>Varsler om avfallshenting i Horten kommune. Minner deg på hvilke avfallstyper som hentes neste dag.</description>
-    <language>no</language>
+    <description>Ukentlige varsler om avfallshenting i Horten kommune.</description>
     <lastBuildDate>{now_str}</lastBuildDate>
-    <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.rss" rel="self" type="application/rss+xml"/>
     <managingEditor>post@horten.kommune.no (Horten kommune)</managingEditor>
     <ttl>60</ttl>{items_xml}
   </channel>
@@ -95,26 +98,22 @@ def build_feed(items_xml, now_str):
 
 def main():
     now = datetime.now(tz=OSLO)
+    weeks = group_by_week()
     items_xml = ''
 
-    for date_str in sorted(COLLECTIONS.keys()):
-        pub_dt = pub_datetime(date_str)
+    for (iso_year, iso_week), typer in weeks.items():
+        pub_dt = sunday_pub_dt(iso_year, iso_week)
 
-        # Only include items whose pubDate has been reached
         if pub_dt > now:
             continue
 
-        typer = COLLECTIONS[date_str]
-        d = datetime.strptime(date_str, '%Y-%m-%d')
-        uke = d.isocalendar()[1]
         ikoner = ' '.join(IKONER.get(t, '♻️') for t in typer)
         ts = typer_streng(typer)
 
-        title = f'{ikoner} Husk avfallshenting i morgen \u2013 {ts}'
+        title = f'{ikoner} Avfallshenting denne uka – {ts}'
         desc = (
-            f'Husk \u00e5 sette frem dunken(e) i morgen, {norsk_dato(d)} '
-            f'(uke {uke}). F\u00f8lgende avfall hentes: {ts}. '
-            f'Sjekk hentedager for din adresse p\u00e5 horten.kommune.no.'
+            f'Denne uka (uke {iso_week}) hentes følgende avfall i Horten: {ts}. '
+            f'Sjekk hvilken dag avfallet hentes hos deg på horten.kommune.no.'
         )
 
         items_xml += f"""
@@ -122,7 +121,7 @@ def main():
       <title>{title}</title>
       <description>{desc}</description>
       <pubDate>{format_datetime(pub_dt)}</pubDate>
-      <guid isPermaLink="false">horten-avfall-{date_str}</guid>
+      <guid isPermaLink="false">horten-avfall-uke-{iso_year}-{iso_week:02d}</guid>
       <link>{ARTICLE_URL}</link>
     </item>"""
 

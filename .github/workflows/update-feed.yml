@@ -6,6 +6,9 @@ on:
     - cron: '0 5 * * *'
   workflow_dispatch: # Tillater manuell kjøring fra GitHub-grensesnittet
 
+permissions:
+  contents: write
+  
 jobs:
   update-feed:
     runs-on: ubuntu-latest

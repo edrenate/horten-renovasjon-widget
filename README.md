@@ -1,1 +1,0 @@
-# horten-renovasjon-widget

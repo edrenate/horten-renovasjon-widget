@@ -1,0 +1,354 @@
+[renovasjon-widget.html](https://github.com/user-attachments/files/27117173/renovasjon-widget.html)
+# horten-renovasjon-widget<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hentedager for avfall – Horten</title>
+  <style>
+    :root {
+      --grønn: #2e7d32;
+      --grønn-lys: #e8f5e9;
+      --grå: #f5f5f5;
+      --kant: #ddd;
+      --tekst: #222;
+      --liten: 0.85rem;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--tekst);
+      background: #fff;
+    }
+
+    .widget {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+      color: var(--grønn);
+    }
+
+    p.ingress {
+      font-size: var(--liten);
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .søk-wrapper {
+      position: relative;
+    }
+
+    #adressefelt {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border: 2px solid var(--kant);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #adressefelt:focus { border-color: var(--grønn); }
+
+    #forslag {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid var(--kant);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    #forslag li {
+      list-style: none;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    #forslag li:hover, #forslag li.aktiv { background: var(--grønn-lys); }
+
+    #status {
+      margin-top: 0.8rem;
+      font-size: var(--liten);
+      color: #666;
+      min-height: 1.2em;
+    }
+
+    #resultat {
+      margin-top: 1.2rem;
+    }
+
+    .adresse-tittel {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+      color: #333;
+    }
+
+    .fraksjon-liste {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .fraksjon-kort {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.65rem 0.9rem;
+      background: var(--grå);
+      border-radius: 6px;
+      border-left: 4px solid var(--grønn);
+    }
+
+    .fraksjon-ikon {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .fraksjon-info { flex: 1; }
+
+    .fraksjon-navn {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .neste-dato {
+      font-size: var(--liten);
+      color: #444;
+    }
+
+    .dato-liste {
+      font-size: 0.78rem;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    .ingen-data {
+      font-size: var(--liten);
+      color: #999;
+      font-style: italic;
+    }
+
+    .feil { color: #c62828; font-size: var(--liten); margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+<div class="widget">
+  <h2>Når hentes avfallet hos deg?</h2>
+  <p class="ingress">Skriv inn adressen din for å se hentedager for ulike avfallstyper i Horten.</p>
+
+  <div class="søk-wrapper">
+    <input
+      type="text"
+      id="adressefelt"
+      placeholder="F.eks. Storgata 1, Horten"
+      autocomplete="off"
+      aria-label="Adresse"
+    />
+    <ul id="forslag" hidden></ul>
+  </div>
+
+  <div id="status"></div>
+  <div id="resultat"></div>
+</div>
+
+<script>
+  const KOMMUNENR    = "3901";
+  const APP_KEY      = "AE13DEEC-804F-4615-A74E-B4FAC11F0A30";
+  const PROXY_BASE   = "https://norkartrenovasjon.azurewebsites.net/proxyserver.ashx";
+  const KOMTEK_BASE  = "https://komteksky.norkart.no/MinRenovasjon.Api/api";
+  const GEO_URL      = "https://ws.geonorge.no/adresser/v1/sok";
+
+  const felt     = document.getElementById("adressefelt");
+  const forslagEl = document.getElementById("forslag");
+  const statusEl  = document.getElementById("status");
+  const resultatEl = document.getElementById("resultat");
+
+  let søkeTimer = null;
+  let fraksjoner = {};
+
+  // ─── Fetch wrapper med Norkart-headere ───────────────────────────────────
+  function komtekFetch(path) {
+    return fetch(PROXY_BASE + "?server=" + encodeURIComponent(KOMTEK_BASE + path), {
+      headers: { "Kommunenr": KOMMUNENR, "RenovasjonAppKey": APP_KEY }
+    }).then(r => r.json());
+  }
+
+  // ─── Last fraksjoner ved oppstart ────────────────────────────────────────
+  komtekFetch("/fraksjoner").then(data => {
+    data.forEach(f => { fraksjoner[f.Id] = f; });
+  }).catch(() => {});
+
+  // ─── Adresseoppslag (Geonorge) ───────────────────────────────────────────
+  async function søkAdresse(tekst) {
+    const url = GEO_URL + "?" + new URLSearchParams({
+      sok: tekst,
+      kommunenummer: KOMMUNENR,
+      utkoordsys: "4258",
+      treffPerSide: 8,
+      filtrer: [
+        "adresser.kommunenummer",
+        "adresser.adressenavn",
+        "adresser.adressekode",
+        "adresser.nummer",
+        "adresser.kommunenavn",
+        "adresser.postnummer",
+        "adresser.poststed"
+      ].join(",")
+    });
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.adresser || [];
+  }
+
+  function visForslag(adresser) {
+    forslagEl.innerHTML = "";
+    if (!adresser.length) { forslagEl.hidden = true; return; }
+
+    adresser.forEach(a => {
+      const li = document.createElement("li");
+      li.textContent = `${a.adressenavn} ${a.nummer}, ${a.postnummer} ${a.poststed}`;
+      li.dataset.gatenavn  = a.adressenavn;
+      li.dataset.gatekode  = a.adressekode;
+      li.dataset.husnr     = a.nummer;
+      li.addEventListener("mousedown", e => {
+        e.preventDefault();
+        velgAdresse(li.textContent, li.dataset.gatenavn, li.dataset.gatekode, li.dataset.husnr);
+      });
+      forslagEl.appendChild(li);
+    });
+    forslagEl.hidden = false;
+  }
+
+  async function velgAdresse(tekst, gatenavn, gatekode, husnr) {
+    felt.value = tekst;
+    forslagEl.hidden = true;
+    statusEl.textContent = "Henter kalender…";
+    resultatEl.innerHTML = "";
+
+    try {
+      const today = new Date();
+      const fraDato = formatDate(today);
+      const tilDato = formatDate(new Date(today.getFullYear(), today.getMonth() + 6, today.getDate()));
+
+      const path = `/tommekalender/?gatenavn=${encodeURIComponent(gatenavn)}&gatekode=${gatekode}&husnr=${encodeURIComponent(husnr)}&fraDato=${fraDato}&dato=${tilDato}&api-version=2`;
+      const kalender = await komtekFetch(path);
+
+      statusEl.textContent = "";
+      visKalender(tekst, kalender);
+    } catch (e) {
+      statusEl.textContent = "";
+      resultatEl.innerHTML = `<p class="feil">Kunne ikke hente kalender. Prøv igjen.</p>`;
+    }
+  }
+
+  function visKalender(adresse, kalender) {
+    if (!kalender || !kalender.length) {
+      resultatEl.innerHTML = `<p class="ingen-data">Fant ingen hentedager for denne adressen.</p>`;
+      return;
+    }
+
+    const sortert = [...kalender].sort((a, b) => {
+      const aFørste = a.Tommedatoer[0] || "9999";
+      const bFørste = b.Tommedatoer[0] || "9999";
+      return aFørste.localeCompare(bFørste);
+    });
+
+    const html = `
+      <div class="adresse-tittel">${adresse}</div>
+      <div class="fraksjon-liste">
+        ${sortert.map(item => kortHTML(item)).join("")}
+      </div>
+    `;
+    resultatEl.innerHTML = html;
+  }
+
+  function kortHTML(item) {
+    const f = fraksjoner[item.FraksjonId] || { Navn: `Type ${item.FraksjonId}`, Ikon: "" };
+    const datoer = (item.Tommedatoer || []).map(d => new Date(d));
+    const kommende = datoer.filter(d => d >= new Date());
+
+    const nesteDato = kommende[0]
+      ? `<div class="neste-dato">Neste henting: <strong>${norskDato(kommende[0])}</strong></div>`
+      : `<div class="neste-dato ingen-data">Ingen planlagte hentinger</div>`;
+
+    const nesteFire = kommende.slice(1, 4);
+    const datoListe = nesteFire.length
+      ? `<div class="dato-liste">Deretter: ${nesteFire.map(norskDato).join(" · ")}</div>`
+      : "";
+
+    const ikoner = {
+      1: "♻️", 2: "📰", 3: "🥦", 4: "🍾", 5: "🥤",
+      6: "🏗️", 7: "🧴", 8: "🪵", 9: "👕", 10: "🌿",
+      11: "🔩", 12: "📺", 13: "📦", 14: "🛋️", 15: "⚠️",
+    };
+    const emoji = ikoner[item.FraksjonId] || "🗑️";
+
+    return `
+      <div class="fraksjon-kort">
+        <span class="fraksjon-ikon" aria-hidden="true" style="font-size:1.8rem;line-height:1;">${emoji}</span>
+        <div class="fraksjon-info">
+          <div class="fraksjon-navn">${f.Navn}</div>
+          ${nesteDato}
+          ${datoListe}
+        </div>
+      </div>
+    `;
+  }
+
+  // ─── Hjelpefunksjoner ────────────────────────────────────────────────────
+  function formatDate(d) {
+    return d.toISOString().slice(0, 10);
+  }
+
+  function norskDato(d) {
+    return d.toLocaleDateString("nb-NO", { weekday: "short", day: "numeric", month: "long" });
+  }
+
+  // ─── Hendelser ───────────────────────────────────────────────────────────
+  felt.addEventListener("input", () => {
+    clearTimeout(søkeTimer);
+    const val = felt.value.trim();
+    if (val.length < 3) { forslagEl.hidden = true; return; }
+    søkeTimer = setTimeout(async () => {
+      const adresser = await søkAdresse(val).catch(() => []);
+      visForslag(adresser);
+    }, 280);
+  });
+
+  felt.addEventListener("blur", () => {
+    setTimeout(() => { forslagEl.hidden = true; }, 150);
+  });
+
+  felt.addEventListener("focus", () => {
+    if (forslagEl.children.length) forslagEl.hidden = false;
+  });
+
+  document.addEventListener("keydown", e => {
+    if (forslagEl.hidden) return;
+    const items = Array.from(forslagEl.querySelectorAll("li"));
+    const aktiv = forslagEl.querySelector(".aktiv");
+    let idx = items.indexOf(aktiv);
+    if (e.key === "ArrowDown") { e.preventDefault(); items[Math.min(idx + 1, items.length - 1)]?.classList.add("aktiv"); aktiv?.classList.remove("aktiv"); }
+    if (e.key === "ArrowUp")   { e.preventDefault(); items[Math.max(idx - 1, 0)]?.classList.add("aktiv"); aktiv?.classList.remove("aktiv"); }
+    if (e.key === "Enter" && aktiv) aktiv.dispatchEvent(new MouseEvent("mousedown"));
+    if (e.key === "Escape") forslagEl.hidden = true;
+  });
+</script>
+</body>
+</html>

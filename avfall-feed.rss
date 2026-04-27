@@ -5,7 +5,7 @@
     <link>https://www.horten.kommune.no/renovasjon/hentedager-for-avfall/</link>
     <description>Varsler om avfallshenting i Horten kommune. Minner deg på hvilke avfallstyper som hentes neste dag.</description>
     <language>no</language>
-    <lastBuildDate>Mon, 27 Apr 2026 18:35:16 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 27 Apr 2026 19:02:36 +0200</lastBuildDate>
     <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>post@horten.kommune.no (Horten kommune)</managingEditor>
     <ttl>60</ttl>

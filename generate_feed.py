@@ -112,7 +112,6 @@ def main():
 
         title = f'{ikoner} Avfallshenting denne uka – {ts}'
         desc = (
-            f'Denne uka (uke {iso_week}) hentes følgende avfall i Horten: {ts}. '
             f'Sjekk hvilken dag avfallet hentes hos deg på horten.kommune.no.'
         )
 

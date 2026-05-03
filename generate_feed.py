@@ -15,7 +15,7 @@ IKONER = {
     'Restavfall':                 '🗑️',
     'Plastemballasje':            '🧴',
     'Papir':                      '📰',
-    'Glass- og metallemballasje': '🍾',
+    'Glass- og metallemballasje': '🫙',
 }
 
 TYPE_ORDER = list(IKONER.keys())

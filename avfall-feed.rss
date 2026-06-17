@@ -4,7 +4,7 @@
     <title>Avfallshenting i Horten</title>
     <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
     <description>Ukentlige varsler om avfallshenting i Horten kommune.</description>
-    <lastBuildDate>Sun, 14 Jun 2026 20:17:18 +0200</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2026 09:49:07 +0200</lastBuildDate>
     <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.rss" rel="self" type="application/rss+xml"/>
     <managingEditor>post@horten.kommune.no (Horten kommune)</managingEditor>
     <ttl>60</ttl>
@@ -14,6 +14,7 @@
       <pubDate>Sun, 26 Apr 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-18</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 Avfallshenting denne uka – Matavfall</title>
@@ -21,6 +22,7 @@
       <pubDate>Sun, 03 May 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-19</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 🗑️ Avfallshenting denne uka – Matavfall og Restavfall</title>
@@ -28,6 +30,7 @@
       <pubDate>Sun, 10 May 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-20</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>📰 🫙 Avfallshenting denne uka – Papir og Glass- og metallemballasje</title>
@@ -35,6 +38,7 @@
       <pubDate>Sun, 17 May 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-21</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 🧴 Avfallshenting denne uka – Matavfall og Plastemballasje</title>
@@ -42,6 +46,7 @@
       <pubDate>Sun, 24 May 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-22</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 Avfallshenting denne uka – Matavfall</title>
@@ -49,6 +54,7 @@
       <pubDate>Sun, 31 May 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-23</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 🗑️ Avfallshenting denne uka – Matavfall og Restavfall</title>
@@ -56,6 +62,7 @@
       <pubDate>Sun, 07 Jun 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-24</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
     <item>
       <title>🥦 📰 Avfallshenting denne uka – Matavfall og Papir</title>
@@ -63,6 +70,7 @@
       <pubDate>Sun, 14 Jun 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-25</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>
   </channel>
 </rss>

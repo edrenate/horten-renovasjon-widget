@@ -122,6 +122,7 @@ def main():
       <pubDate>{format_datetime(pub_dt)}</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-{iso_year}-{iso_week:02d}</guid>
       <link>{ARTICLE_URL}</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>"""
 
     feed = build_feed(items_xml, format_datetime(now))

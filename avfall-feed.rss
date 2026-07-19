@@ -4,7 +4,7 @@
     <title>Avfallshenting i Horten</title>
     <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
     <description>Ukentlige varsler om avfallshenting i Horten kommune.</description>
-    <lastBuildDate>Sun, 12 Jul 2026 20:02:06 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jul 2026 20:01:40 +0200</lastBuildDate>
     <atom:link href="https://edrenate.github.io/horten-renovasjon-widget/avfall-feed.rss" rel="self" type="application/rss+xml"/>
     <managingEditor>post@horten.kommune.no (Horten kommune)</managingEditor>
     <ttl>60</ttl>
@@ -101,6 +101,14 @@
       <description>Sjekk hvilken dag avfallet hentes hos deg på horten.kommune.no.</description>
       <pubDate>Sun, 12 Jul 2026 19:00:00 +0200</pubDate>
       <guid isPermaLink="false">horten-avfall-uke-2026-29</guid>
+      <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
+      <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>🥦 🧴 Avfallshenting denne uka – Matavfall og Plastemballasje</title>
+      <description>Sjekk hvilken dag avfallet hentes hos deg på horten.kommune.no.</description>
+      <pubDate>Sun, 19 Jul 2026 19:00:00 +0200</pubDate>
+      <guid isPermaLink="false">horten-avfall-uke-2026-30</guid>
       <link>https://www.horten.kommune.no/avfall-og-gjenvinning/nar-blir-avfallet-hentet/</link>
       <enclosure url="https://edrenate.github.io/horten-renovasjon-widget/soppeldunker.jpg" length="0" type="image/jpeg"/>
     </item>

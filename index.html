@@ -257,11 +257,19 @@
   }
 
   function visKalender(adresse, kalender) {
-    // API returnerer enten flat array eller innpakket objekt {Tommedatoer: [...]}
+    // API returnerer enten flat array eller innpakket objekt {Tommedatoer: [...], UkjentAdresse: bool}
+    const ukjent = kalender?.UkjentAdresse === true;
     const liste = Array.isArray(kalender) ? kalender : (kalender?.Tommedatoer ?? []);
 
-    if (!liste.length) {
-      resultatEl.innerHTML = `<p class="ingen-data">Fant ingen hentedager for denne adressen.</p>`;
+    if (ukjent || !liste.length) {
+      resultatEl.innerHTML = `
+        <p class="ingen-data">
+          Adressen ble ikke funnet i Vesars hentedagsregister.<br>
+          <span style="margin-top:0.4rem;display:inline-block;">
+            Ta kontakt med Vesar på <a href="tel:33085300">33 08 53 00</a>
+            eller <a href="https://vesar.no" target="_blank">vesar.no</a> for hjelp.
+          </span>
+        </p>`;
       return;
     }
 

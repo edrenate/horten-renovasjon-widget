@@ -51,7 +51,7 @@ COLLECTIONS = {
     '2026-08-12': ['Matavfall'],
     '2026-08-18': ['Plastemballasje'],
     '2026-08-19': ['Matavfall'],
-    '2026-08-26': ['Matavfall'],
+    '2026-08-26': ['Matavfall', 'Plastemballasje'],
 }
 
 
